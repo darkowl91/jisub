@@ -38,7 +38,7 @@ need() {
 binName="jisub"
 git="darkowl91/jisub"
 version="0.1.0"
-tag="v$version"
+tag="$version"
 
 while test $# -gt 0; do
     case $1 in
@@ -110,7 +110,7 @@ esac
 
 arch="$(uname -m)"
 
-url="$url/download/$tag/${binName}_${version}_${platform}_${arch}.tar.gz"
+url="$url/download/$tag/${binName}-${version}.${platform}-${arch}.tar.gz"
 
 say_err "Downloading: $url"
 
