@@ -14,9 +14,9 @@ const (
 	iniConfig = "/jisub/jisub.ini"
 )
 
-// > jisub --config user.token RandomTokenValueStr
-// > jisub --config jira.url "https://jira-api.com/jira/rest/api/2"
-// > jisub --syb-tasks JIRA-39106 QA:2 BE:3 FE:4
+// > jisub --config "user.token RandomTokenValueStr"
+// > jisub --config "jira.url "https://jira-api.com/jira/rest/api/2"
+// > jisub --syb-tasks "JIRA-39106 QA:2 BE:3 FE:4"
 func main() {
 	flag.Func("config", "prop.key value", config)
 	flag.Func("sub-tasks", "JIRA-1234 BE:2 FE:3 QA:4", subTasks)
@@ -24,6 +24,7 @@ func main() {
 }
 
 func config(arg string) error {
+
 	items := strings.Split(arg, " ")
 	// expect key value pair
 	if len(items) < 2 {
@@ -55,6 +56,7 @@ func config(arg string) error {
 
 // string in format: EPMHRMS-39106 QA:2 BE:3 FE:4
 func subTasks(arg string) error {
+
 	jira, err := buildNewJiraFromConfig()
 	if err != nil {
 		return fmt.Errorf("missing configuration: %w", err)
@@ -113,6 +115,7 @@ func parseSubtaskToMap(subTasks string, resultMap map[string]float64) error {
 }
 
 func buildNewJiraFromConfig() (*Jira, error) {
+
 	pwd, _ := os.Getwd()
 	cfg, err := ini.Load(pwd + iniConfig)
 	if err != nil {

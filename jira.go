@@ -16,6 +16,7 @@ const (
 )
 
 func NewJira(baseUrl string, auth *Auth) *Jira {
+
 	client := &http.Client{}
 
 	return &Jira{
