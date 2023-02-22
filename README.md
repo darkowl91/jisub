@@ -7,7 +7,7 @@
 If you are using Linux, macOS or WSL you can use the following command
 
 ```bash
-curl -fsSL https://raw.github.com//tools/install.sh | sudo bash
+curl -fsSL https://raw.github.com/darkowl91/jisub/main/tools/install.sh | sudo bash
 ```
 
 ## Config
