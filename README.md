@@ -1,4 +1,4 @@
-# jisub
+# 📋 jisub
 
 > CLI tool to simplify jira tickets interaction
 
@@ -15,13 +15,13 @@ curl -fsSL https://raw.github.com//tools/install.sh | sudo bash
 + Configure jira instance API path:
 
 ```bash
-    jisub --config jira.url "https://jira-api.com/jira/rest/api/2"
+    jisub --config "jira.url https://jira-api.com/jira/rest/api/2"
 ```
 
 + Obtain jira token from profile and add it to configuration
 
 ```bash
-    jisub --config user.token "JIRA_TOKEN"
+    jisub --config "user.token JIRA_TOKEN"
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ curl -fsSL https://raw.github.com//tools/install.sh | sudo bash
 + Create required sub tasks with estimates for the parent ticket:
 
 ```bash
-    jisub --syb-tasks JIRA-39106 QA:2 BE:3 FE:4
+    jisub --syb-tasks "JIRA-39106 QA:2 BE:3 FE:4"
 ```
 
 Output:
