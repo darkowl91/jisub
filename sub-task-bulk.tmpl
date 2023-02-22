@@ -1,0 +1,23 @@
+{
+    "issueUpdates": [
+       {{$first := true}}
+       {{- range $key, $value := .StoryPoints }}
+        {{if $first}}{{$first = false}}{{else}},{{end}}
+            {
+                "fields": {
+                    "summary": "{{$key}}: {{$.Parent.Fields.Summary}}",
+                    "customfield_10004": {{$value}},
+                    "issuetype": {
+                        "id": "5"
+                    },
+                    "project": {
+                        "id": "{{$.Parent.Fields.Project.Id}}"
+                    },
+                    "parent": {
+                        "id": "{{$.Parent.Key}}"
+                    }
+                }
+            }
+        {{- end}}
+    ]
+}
