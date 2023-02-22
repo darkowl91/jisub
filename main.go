@@ -32,7 +32,8 @@ func config(arg string) error {
 	}
 
 	// load config, in case not loaded create empty
-	cfg, err := ini.Load(iniConfig)
+	pwd, _ := os.Getwd()
+	cfg, err := ini.Load(pwd + iniConfig)
 	if err != nil {
 		cfg = ini.Empty()
 	}
@@ -46,7 +47,7 @@ func config(arg string) error {
 	section := cfg.Section(sectionKey[0])
 	section.Key(sectionKey[1]).SetValue(items[1])
 
-	err = cfg.SaveTo(iniConfig)
+	err = cfg.SaveTo(pwd + iniConfig)
 	if err != nil {
 		return err
 	}
