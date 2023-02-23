@@ -24,13 +24,11 @@ type Issues struct {
 }
 
 type IssueFields struct {
-	Summary           string       `json:"summary"`
-	SubTasks          []*Issue     `json:"subtasks"`
-	Status            *IssueStatus `json:"status"`
-	IssueType         *IssueType   `json:"issuetype"`
-	Project           *JiraProject `json:"project"`
-	CustomField_26606 string       `json:"customfield_26606"` // deal_size
-	CustomField_10004 float32      `json:"customfield_10004"` // story_points
+	Summary   string       `json:"summary"`
+	SubTasks  []*Issue     `json:"subtasks"`
+	Status    *IssueStatus `json:"status"`
+	IssueType *IssueType   `json:"issuetype"`
+	Project   *JiraProject `json:"project"`
 }
 
 type IssueStatus struct {

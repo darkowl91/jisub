@@ -1,0 +1,11 @@
+{
+    "fields": {
+        {{if .UpdateData.dealsize }}
+            "CustomField_26606": "{{index .UpdateData "dealsize"}}",
+        {{end}}
+
+        {{if .UpdateData.storypoints }}
+            "CustomField_10004": {{index .UpdateData "storypoints"}}
+        {{end}}
+    }
+}

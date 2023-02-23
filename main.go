@@ -16,13 +16,16 @@ const (
 
 // > jisub --config "user.token RandomTokenValueStr"
 // > jisub --config "jira.url "https://jira-api.com/jira/rest/api/2"
-// > jisub --syb-tasks "JIRA-39106 QA:2 BE:3 FE:4"
+// > jisub --sub-tasks "JIRA-39106 QA:2 BE:3 FE:4"
+// TODO:
+// > jisub --issue "JIRA-39106" --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4"
 func main() {
 	flag.Func("config", "prop.key value", config)
 	flag.Func("sub-tasks", "JIRA-1234 BE:2 FE:3 QA:4", subTasks)
 	flag.Parse()
 }
 
+// string in format: "section.key value"
 func config(arg string) error {
 
 	items := strings.Split(arg, " ")
@@ -55,7 +58,7 @@ func config(arg string) error {
 	return nil
 }
 
-// string in format: EPMHRMS-39106 QA:2 BE:3 FE:4
+// string in format: "JIRA-39106 QA:2 BE:3 FE:4"
 func subTasks(arg string) error {
 
 	jira, err := buildNewJiraFromConfig()
@@ -79,6 +82,7 @@ func subTasks(arg string) error {
 	// parse sub-tasks map, prefix:estimate
 	spMap := make(map[string]float64)
 	for i, v := range items {
+		// skipping JIRA-123 - parent ticket
 		if i == 0 {
 			continue
 		}
