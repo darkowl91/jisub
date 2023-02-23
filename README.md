@@ -4,11 +4,8 @@
 
 ## Install
 
-If you are using Linux, macOS or WSL you can use the following command
-
-```bash
-curl -fsSL https://raw.github.com/darkowl91/jisub/main/tools/install.sh | sudo bash
-```
+Download latest release version. Extract to user home dir.
+Add to jisub executable to PATH `~/jisub`
 
 ## Config
 
@@ -38,3 +35,11 @@ Output:
 + `JIRA-1`
 + `JIRA-2`
 + `JIRA-3`
+
+## TODO
+
++ Support multi command execution eg.:
+
+``` bash
+jisub --issue "JIRA-39106" --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4"
+```
