@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	subTaskBulkTmpl = "/jisub/sub-task-bulk.tmpl"
-	subTaskTmpl     = "/jisub/sub-task.tmpl"
-	issueTmpl       = "/jisub/issue.tmpl"
+	subTaskBulkTmpl = "/sub-task-bulk.tmpl"
+	subTaskTmpl     = "/sub-task.tmpl"
+	issueTmpl       = "/issue.tmpl"
 )
 
 func NewJira(baseUrl string, auth *Auth) *Jira {
@@ -113,7 +113,7 @@ func (j *Jira) SubTask(parent Issue, prefix string, sp float32) (*Issue, error) 
 }
 
 // Creates multiple sub-tasks for the parent issue based on work breakdown Eg. QA:2, BE:3, ect
-func (j *Jira) SubTasks(parent Issue, sp map[string]float64) (*Issues, error) {
+func (j *Jira) SubTasks(parent Issue, sp map[string]string) (*Issues, error) {
 
 	if len(sp) == 0 {
 		return &Issues{
@@ -130,7 +130,7 @@ func (j *Jira) SubTasks(parent Issue, sp map[string]float64) (*Issues, error) {
 	var buff bytes.Buffer
 	err = tmpl.Execute(&buff, struct {
 		Parent      Issue
-		StoryPoints map[string]float64
+		StoryPoints map[string]string
 	}{
 		Parent:      parent,
 		StoryPoints: sp,
@@ -153,15 +153,15 @@ func (j *Jira) SubTasks(parent Issue, sp map[string]float64) (*Issues, error) {
 }
 
 // Update for the issue using incoming issue key, and key value data
-func (j *Jira) IssueUpdate(parent Issue, updateData map[string]string) (*Issue, error) {
+func (j *Jira) IssueUpdate(parent Issue, updateData map[string]string) error {
 	if len(parent.Key) == 0 {
-		return nil, fmt.Errorf("missing required issue key")
+		return fmt.Errorf("missing required issue key")
 	}
 
 	pwd, _ := os.Getwd()
 	tmpl, err := template.ParseFiles(pwd + issueTmpl)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var buff bytes.Buffer
@@ -174,8 +174,10 @@ func (j *Jira) IssueUpdate(parent Issue, updateData map[string]string) (*Issue, 
 		UpdateData: updateData,
 	})
 
+	fmt.Println(buff.String())
+
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	url := j.BaseUrl + "/issue/" + parent.Key
@@ -183,10 +185,9 @@ func (j *Jira) IssueUpdate(parent Issue, updateData map[string]string) (*Issue, 
 	req.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var issue Issue
-	return &issue, j.execute(req, &issue)
+	return j.execute(req, nil)
 
 }

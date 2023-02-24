@@ -4,30 +4,152 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"gopkg.in/ini.v1"
 )
 
 const (
-	iniConfig = "/jisub/jisub.ini"
+	iniConfig = "/jisub.ini"
+	version   = "0.1.1"
 )
+
+var (
+	configFlag   string
+	subTasksFlag string
+	fieldsFlag   string
+	versionFlag  bool
+	helpFlag     bool
+)
+
+func init() {
+	// jisub  jira configuration
+	flag.StringVar(&configFlag, "config", "", "Create/Update jira configuration")
+	flag.StringVar(&configFlag, "c", "", "Create/Update jira configuration")
+
+	// list of issue subtasks
+	flag.StringVar(&subTasksFlag, "sub-tasks", "", "Sub tasks to create for provided parent issue")
+	flag.StringVar(&subTasksFlag, "st", "", "Sub tasks to create for provided parent issue")
+
+	// fields to update
+	flag.StringVar(&fieldsFlag, "fields", "", "Field name, value to update for provided issue")
+	flag.StringVar(&fieldsFlag, "f", "", "Field name, value to update for provided issue")
+
+	// version
+	flag.BoolVar(&versionFlag, "version", false, "Version information")
+	flag.BoolVar(&versionFlag, "v", false, "Version information")
+
+	// help
+	flag.BoolVar(&versionFlag, "help", false, "Usage example")
+	flag.BoolVar(&versionFlag, "h", false, "Usage example")
+}
 
 // > jisub --config "user.token RandomTokenValueStr"
 // > jisub --config "jira.url "https://jira-api.com/jira/rest/api/2"
-// > jisub --sub-tasks "JIRA-39106 QA:2 BE:3 FE:4"
-// TODO:
-// > jisub --issue "JIRA-39106" --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4"
+
+// > jisub --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4" JIRA-39106"
 func main() {
-	flag.Func("config", "prop.key value", config)
-	flag.Func("sub-tasks", "JIRA-1234 BE:2 FE:3 QA:4", subTasks)
 	flag.Parse()
+
+	if versionFlag {
+		fmt.Println("jisub version " + version)
+		return
+	}
+
+	if helpFlag {
+		flag.Usage()
+		return
+	}
+
+	if len(configFlag) > 0 {
+		err := updateConfig(configFlag)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(-1)
+		}
+
+		return
+	}
+
+	err := updateIssue(subTasksFlag, fieldsFlag, flag.Arg(0))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
+	}
 }
 
-// string in format: "section.key value"
-func config(arg string) error {
+func updateIssue(subtaskArg, fieldsArg, issueKey string) error {
+	if issueKey == "" {
+		return fmt.Errorf("missing required issue key")
+	}
 
+	jira, err := buildNewJiraFromConfig()
+	if err != nil {
+		return fmt.Errorf("error creating jira client %w", err)
+	}
+
+	issue, err := jira.Issue(issueKey)
+	if err != nil {
+		return fmt.Errorf("issue not found %v %w", issueKey, err)
+	}
+
+	if subtaskArg != "" {
+		err = createSubTasks(*jira, *issue, subtaskArg)
+		if err != nil {
+			return fmt.Errorf("error creating sub tasks %v, %v %w", subtaskArg, issueKey, err)
+		}
+	}
+
+	if fieldsArg != "" {
+		err = updateIssueFields(*jira, *issue, fieldsArg)
+		if err != nil {
+			return fmt.Errorf("error updating issue fields %v, %v %w", fieldsArg, issueKey, err)
+		}
+	}
+
+	return nil
+}
+
+func createSubTasks(j Jira, parent Issue, subtasksArg string) error {
+
+	subTasksMap := make(map[string]string)
+	err := stringToMap(subtasksArg, subTasksMap)
+	if err != nil {
+		return err
+	}
+
+	result, err := j.SubTasks(parent, subTasksMap)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("sub tasks:")
+	for _, issue := range result.Issues {
+		fmt.Println(issue.Key)
+	}
+
+	return nil
+}
+
+func updateIssueFields(j Jira, issue Issue, fieldsArg string) error {
+
+	fieldsUpdatesMap := make(map[string]string)
+	err := stringToMap(fieldsArg, fieldsUpdatesMap)
+	if err != nil {
+		return err
+	}
+
+	err = j.IssueUpdate(issue, fieldsUpdatesMap)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("issue updated %v", issue.Key)
+
+	return nil
+}
+
+func updateConfig(arg string) error {
 	items := strings.Split(arg, " ")
 	// expect key value pair
 	if len(items) < 2 {
@@ -58,67 +180,6 @@ func config(arg string) error {
 	return nil
 }
 
-// string in format: "JIRA-39106 QA:2 BE:3 FE:4"
-func subTasks(arg string) error {
-
-	jira, err := buildNewJiraFromConfig()
-	if err != nil {
-		return fmt.Errorf("missing configuration: %w", err)
-	}
-
-	items := strings.Split(arg, " ")
-
-	// expecting at lest parent ticket and 1 subtask
-	if len(items) < 2 {
-		return fmt.Errorf("wrong number of arguments provided")
-	}
-
-	// search for parent ticket to creates subtasks for
-	parent, err := jira.Issue(items[0])
-	if err != nil {
-		return err
-	}
-
-	// parse sub-tasks map, prefix:estimate
-	spMap := make(map[string]float64)
-	for i, v := range items {
-		// skipping JIRA-123 - parent ticket
-		if i == 0 {
-			continue
-		}
-		parseSubtaskToMap(v, spMap)
-	}
-
-	// post subtasks creation
-	subTasks, err := jira.SubTasks(*parent, spMap)
-	if err != nil {
-		return err
-	}
-
-	// print result
-	for _, issue := range subTasks.Issues {
-		fmt.Println(issue.Key)
-	}
-
-	return nil
-}
-
-func parseSubtaskToMap(subTasks string, resultMap map[string]float64) error {
-
-	tasksItem := strings.Split(subTasks, ":")
-
-	if len(tasksItem) < 2 {
-		return fmt.Errorf("incorrect value format, expect: PREFIX:NUM")
-	}
-	value, err := strconv.ParseFloat(tasksItem[1], 64)
-	if err != nil {
-		return err
-	}
-	resultMap[tasksItem[0]] = value
-
-	return nil
-}
-
 func buildNewJiraFromConfig() (*Jira, error) {
 
 	pwd, _ := os.Getwd()
@@ -126,6 +187,7 @@ func buildNewJiraFromConfig() (*Jira, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	baseUrl := cfg.Section("jira").Key("url").Value()
 	if len(baseUrl) == 0 {
 		return nil, fmt.Errorf("missing jira.url value")
@@ -137,4 +199,23 @@ func buildNewJiraFromConfig() (*Jira, error) {
 	}
 
 	return NewJira(baseUrl, BearerAuth(userToken)), nil
+}
+
+func stringToMap(str string, resultMap map[string]string) error {
+	items := strings.Split(str, " ")
+	// no map items provided
+	if len(items) == 0 {
+		return nil
+	}
+
+	for _, v := range items {
+		// key:value
+		mapEntry := strings.Split(v, ":")
+		if len(mapEntry) != 2 {
+			return fmt.Errorf("incorrect value format, expect: key:value")
+		}
+		resultMap[mapEntry[0]] = mapEntry[1]
+	}
+
+	return nil
 }
