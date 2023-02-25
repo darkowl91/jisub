@@ -7,7 +7,7 @@
 ## Install
 
 Download [latest release](https://github.com/darkowl91/jisub/releases/latest) version. Extract to user home dir.
-Add to jisub executable to PATH `~/jisub`
+Add jisub executable to PATH `export PATH=$PATH:~/jisub`
 
 ## Config
 
