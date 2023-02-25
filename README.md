@@ -1,10 +1,12 @@
 # 📋 jisub
 
+![ci-build](https://github.com/darkowl91/jisub/actions/workflows/ci-branch.yaml/badge.svg)
+
 > CLI tool to simplify jira tickets interaction
 
 ## Install
 
-Download latest release version. Extract to user home dir.
+Download [latest release](https://github.com/darkowl91/jisub/releases/latest) version. Extract to user home dir.
 Add to jisub executable to PATH `~/jisub`
 
 ## Config
@@ -27,4 +29,10 @@ Add to jisub executable to PATH `~/jisub`
 
 ```bash
     jisub --syb-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4" JIRA-39106 
+```
+
++ Shorten version:
+
+```bash
+    jisub -st "QA:2 BE:3 FE:4" -f "storypoints:4 dealsize:2,3,4" JIRA-39106 
 ```
