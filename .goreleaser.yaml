@@ -11,14 +11,14 @@ builds:
       - darwin
 
 archives:
-  - files:
+  - format: tar.gz
+    files:
       - jisub-config.ini
       - issue.tmpl
       - sub-task-bulk.tmpl
       - sub-task.tmpl
       - README.md
       - LICENSE
-  - format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
