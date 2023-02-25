@@ -11,7 +11,7 @@ builds:
       - darwin
 
 archives:
-    files:
+  - files:
       - jisub-config.ini
       - issue.tmpl
       - sub-task-bulk.tmpl
