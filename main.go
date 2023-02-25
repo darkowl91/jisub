@@ -11,10 +11,11 @@ import (
 
 const (
 	iniConfig = "/jisub.ini"
-	version   = "0.1.1"
 )
 
 var (
+	version = "dev"
+
 	configFlag   string
 	subTasksFlag string
 	fieldsFlag   string
