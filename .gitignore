@@ -5,6 +5,6 @@ jisub
 jisub.exe
 debug
 debug.test
-jisub.ini
 
 dist/
+jisub.ini
