@@ -24,6 +24,25 @@ var (
 )
 
 func init() {
+	flag.Usage = func() {
+		h := "Usage:\n"
+		h += "  jisub [OPTIONS] JIRA-39106\n\n"
+
+		h += "Options:\n"
+		h += "  -h,  --help 		Print usage\n"
+		h += "  -v,  --version 	Print version info\n"
+		h += "  -c,  --config 	Create/Update jira configuration\n"
+		h += "  -st, --sub-tasks 	Sub tasks to create for provided parent issue\n"
+		h += "  -f,  --fields 	Field name, value to update for provided issue\n\n"
+
+		h += "Examples:\n"
+		h += "  jisub --config \"jira.url https://jira-api.com/jira/rest/api/2\" \n"
+		h += "  jisub --config \"user.token <token>\"\n"
+		h += "  jisub --sub-tasks \"QA:2 BE:3 FE:4\" --fields \"storypoints:4 dealsize:2,3,4\" JIRA-39106\n"
+
+		fmt.Fprint(os.Stderr, h)
+	}
+
 	// jisub  jira configuration
 	flag.StringVar(&configFlag, "config", "", "Create/Update jira configuration")
 	flag.StringVar(&configFlag, "c", "", "Create/Update jira configuration")
@@ -41,14 +60,14 @@ func init() {
 	flag.BoolVar(&versionFlag, "v", false, "Version information")
 
 	// help
-	flag.BoolVar(&versionFlag, "help", false, "Usage example")
-	flag.BoolVar(&versionFlag, "h", false, "Usage example")
+	flag.BoolVar(&helpFlag, "help", false, "Usage example")
+	flag.BoolVar(&helpFlag, "h", false, "Usage example")
 }
 
 // > jisub --config "user.token RandomTokenValueStr"
 // > jisub --config "jira.url "https://jira-api.com/jira/rest/api/2"
 
-// > jisub --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4" JIRA-39106"
+// > jisub --sub-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4" JIRA-39106
 func main() {
 	flag.Parse()
 
