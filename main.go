@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	iniConfig = "/jisub.ini"
+	iniConfig = "/jisub-config.ini"
 )
 
 var (
