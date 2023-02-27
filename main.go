@@ -164,7 +164,7 @@ func updateIssueFields(j Jira, issue Issue, fieldsArg string) error {
 		return err
 	}
 
-	fmt.Printf("issue updated %v", issue.Key)
+	fmt.Printf("issue updated %v\n", issue.Key)
 
 	return nil
 }
