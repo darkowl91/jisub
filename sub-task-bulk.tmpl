@@ -5,7 +5,13 @@
         {{if $first}}{{$first = false}}{{else}},{{end}}
             {
                 "fields": {
-                    "summary": "{{$key}}: {{$.Parent.Fields.Summary}}",
+                    {{if eq $key "QA"}}
+                        "summary": "QA Manual Testing: {{$.Parent.Fields.Summary}}",
+                    {{else if eq $key "TC"}}
+                        "summary": "QA TC Creation: {{$.Parent.Fields.Summary}}",
+                    {{else}}
+                        "summary": "{{$key}}: {{$.Parent.Fields.Summary}}",
+                    {{end}}
                     "customfield_10004": {{$value}},
                     "issuetype": {
                         "id": "5"

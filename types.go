@@ -29,6 +29,7 @@ type IssueFields struct {
 	Status    *IssueStatus `json:"status"`
 	IssueType *IssueType   `json:"issuetype"`
 	Project   *JiraProject `json:"project"`
+	Labels    []*string    `json:"labels"`
 }
 
 type IssueStatus struct {

@@ -174,8 +174,6 @@ func (j *Jira) IssueUpdate(parent Issue, updateData map[string]string) error {
 		UpdateData: updateData,
 	})
 
-	fmt.Println(buff.String())
-
 	if err != nil {
 		return err
 	}
