@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	subTaskBulkTmpl = "/sub-task-bulk.tmpl"
-	subTaskTmpl     = "/sub-task.tmpl"
-	issueTmpl       = "/issue.tmpl"
+	subTaskBulkTmpl = "/jisub/sub-task-bulk.tmpl"
+	subTaskTmpl     = "/jisub/sub-task.tmpl"
+	issueTmpl       = "/jisub/issue.tmpl"
 )
 
 func NewJira(baseUrl string, auth *Auth) *Jira {
