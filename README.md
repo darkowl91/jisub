@@ -25,6 +25,16 @@ Add jisub executable to PATH `export PATH=$PATH:~/jisub`
     jisub --config "user.token JIRA_TOKEN"
 ```
 
+Configuration is stored at `jisub-config.ini` file at jisub home folder.
+
+```ini
+[user]
+token = 
+
+[jira]
+url = 
+```
+
 ## Usage
 
 + Create required sub tasks with estimates for the parent ticket:
@@ -38,6 +48,14 @@ Add jisub executable to PATH `export PATH=$PATH:~/jisub`
 ```bash
     jisub -st "QA:2 BE:3 FE:4" -f "storypoints:4 dealsize:2,3,4" JIRA-39106 
 ```
+
+### Customizing Jira payload
+
+To support various jira fields that may depend on configuration, payload templates are used.
+This would allow to have your own jira mapping.
+
++ `issue.tmpl` - is used for the ticket fields update with the `--fields` flag.
++ `sub-tasks-bulk.tmpl` - is used for the sub tasks creation with the `--sub-tasks` flag.
 
 ### Support
 
