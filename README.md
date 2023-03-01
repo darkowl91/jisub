@@ -40,13 +40,13 @@ url =
 + Create required sub tasks with estimates for the parent ticket:
 
 ```bash
-    jisub --syb-tasks "QA:2 BE:3 FE:4" --fields "storypoints:4 dealsize:2,3,4" JIRA-39106 
+    jisub --sub-tasks "BE:3 FE:4 QA:0.5" --fields "storypoints:4 dealsize:3,4,0.5 label:New" JIRA-39106 
 ```
 
 + Shorten version:
 
 ```bash
-    jisub -st "QA:2 BE:3 FE:4" -f "storypoints:4 dealsize:2,3,4" JIRA-39106 
+    jisub -st "BE:3 FE:4 QA:0.5" -f "storypoints:4 dealsize:3,4,0.5 label:New" JIRA-39106 
 ```
 
 ### Customizing Jira payload
