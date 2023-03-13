@@ -47,8 +47,8 @@ func (j *Jira) execute(req *http.Request, result interface{}) error {
 	}
 
 	if resp.StatusCode >= 300 || resp.StatusCode < 200 {
-		if respText, err := io.ReadAll(req.Body); err == nil {
-			return fmt.Errorf("response error %v %v", resp.StatusCode, respText)
+		if respText, err := io.ReadAll(resp.Body); err == nil {
+			return fmt.Errorf("response error %v %v", resp.StatusCode, string(respText))
 		} else {
 			return err
 		}

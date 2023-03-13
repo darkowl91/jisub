@@ -230,7 +230,7 @@ func stringToMap(str string, resultMap map[string]string) error {
 
 	for _, v := range items {
 		// key:value
-		mapEntry := strings.Split(v, ":")
+		mapEntry := strings.Split(strings.ReplaceAll(v, " ", ""), ":")
 		if len(mapEntry) != 2 {
 			return fmt.Errorf("incorrect value format, expect: key:value")
 		}
